@@ -1,10 +1,16 @@
-import React, { useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { authContext } from '../../contexts/UserContext';
 
 const Login = () => {
-  const {signIn, googleSignIn} = useContext(authContext);
+  const [userEmail, setUserEmail] = useState('');
+  const {signIn, googleSignIn, resetPassword} = useContext(authContext);
   const navigate = useNavigate();
+
+  const onBlurEmail = (e) => {
+    const email = e.target.value;
+    setUserEmail(email);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -36,6 +42,15 @@ const Login = () => {
     })
   };
 
+  const passwordReset = () => {
+    resetPassword(userEmail)
+    .then(()=> {
+      alert(`New password is sent to: ${userEmail}`);
+    }).catch((error)=> {
+      console.log(error);
+    })
+  }
+
 
 
   return (
@@ -50,7 +65,7 @@ const Login = () => {
           <label className="label">
             <span className="label-text">Email</span>
           </label>
-          <input type="email" placeholder="email" name='email' className="input input-bordered" />
+          <input onBlur={onBlurEmail} type="email" placeholder="email" name='email' className="input input-bordered" />
         </div>
         <div className="form-control">
           <label className="label">
@@ -58,7 +73,7 @@ const Login = () => {
           </label>
           <input type="password" placeholder="password" name='password' className="input input-bordered" />
           <label className="label">
-            <Link to={'/register'} className="label-text-alt link link-hover">Forgot password?</Link>
+            <button onClick={passwordReset} className="label-text-alt link link-hover">Forgot password?</button>
           </label>
         </div>
         <div className="form-control mt-6">
